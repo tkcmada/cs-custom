@@ -3,5 +3,10 @@ FROM codercom/code-server:latest
 RUN sudo apt update
 RUN sudo apt-get -y install openjdk-11-jdk maven
 
-ENTRYPOINT ["/usr/bin/entrypoint.sh" "--no-auth" "--bind-addr" "0.0.0.0:8080" "."]
-#ENTRYPOINT /bin/bash
+RUN sudo bash -c '\
+    curl -SsL https://github.com/boxboat/fixuid/releases/download/v0.4/fixuid-0.4-linux-amd64.tar.gz | tar -C /usr/local/bin -xzf - && \
+    chmod 4755 /usr/local/bin/fixuid && \
+    mkdir -p /etc/fixuid && \
+    printf "user: coder\ngroup: coder\n" > /etc/fixuid/config.yml'
+
+ENTRYPOINT ["fixuid", "dumb-init", "code-server", "--host", "0.0.0.0"]
