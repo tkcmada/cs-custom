@@ -9,4 +9,10 @@ RUN sudo bash -c '\
     mkdir -p /etc/fixuid && \
     printf "user: coder\ngroup: coder\n" > /etc/fixuid/config.yml'
 
+RUN sudo apt-get -y install python3-pip
+RUN sudo pip3 install boto3
+RUN sudo pip3 install awscli
+
+RUN code-server --install-extension vscjava.vscode-java-pack
+
 ENTRYPOINT ["fixuid", "dumb-init", "code-server", "--host", "0.0.0.0"]
